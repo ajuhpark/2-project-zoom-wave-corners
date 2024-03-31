@@ -1,0 +1,21 @@
+{
+  "name": "2-project-zoom-wave-corners",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel serve index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajuhpark/2-project-zoom-wave-corners.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ajuhpark/2-project-zoom-wave-corners/issues"
+  },
+  "homepage": "https://github.com/ajuhpark/2-project-zoom-wave-corners#readme"
+}

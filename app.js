@@ -63,7 +63,7 @@ export default class Sketch{
     }
 
     addObjects(){
-        this.geometry = new THREE.PlaneBufferGeometry( 300, 300,100,100);
+        this.geometry = new THREE.PlaneGeometry( 300, 300,100,100);
         console.log(this.geometry)
         this.material = new THREE.ShaderMaterial({
             // wireframe: true,

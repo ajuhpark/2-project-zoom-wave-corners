@@ -46575,7 +46575,7 @@ var Sketch = exports.default = /*#__PURE__*/function () {
   }, {
     key: "addObjects",
     value: function addObjects() {
-      this.geometry = new THREE.PlaneBufferGeometry(300, 300, 100, 100);
+      this.geometry = new THREE.PlaneGeometry(300, 300, 100, 100);
       console.log(this.geometry);
       this.material = new THREE.ShaderMaterial({
         // wireframe: true,
@@ -46666,7 +46666,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51973" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57674" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

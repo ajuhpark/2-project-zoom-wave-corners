@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import fragment from './shaders/fragment.glsl'
 import vertex from './shaders/vertex.glsl'
-import testTexture from './texture.jpg';
+import testTexture from './img/1.jpg';
 import * as dat from 'dat.gui'
 import gsap from 'gsap'
 

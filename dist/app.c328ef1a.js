@@ -38649,8 +38649,8 @@ var OrbitControls = exports.OrbitControls = /*#__PURE__*/function (_EventDispatc
 module.exports = "#define GLSLIFY 1\nuniform float time;\nuniform float uProgress;\nuniform vec2 uTextureSize;\nuniform sampler2D uTexture;\nvarying vec2 vUv;\n\nvarying vec2 vSize;\n\nvec2 getUV(vec2 uv, vec2 textureSize, vec2 quadSize){\n    vec2 tempUV = uv - vec2(0.5);\n\n    float quadAspect = quadSize.x/quadSize.y;\n    float textureAspect = textureSize.x/textureSize.y;\n    if(quadAspect<textureAspect){\n        tempUV = tempUV*vec2(quadAspect/textureAspect,1.);\n    } else{\n        tempUV = tempUV*vec2(1.,textureAspect/quadAspect);\n    }\n\n    tempUV += vec2(0.5);\n    return tempUV;\n}\nvoid main() {\n\n    vec2 correctUV = getUV(vUv,uTextureSize,vSize);\n    vec4 image = texture(uTexture,correctUV);\n    gl_FragColor = vec4( vUv,0.,1.);\n    gl_FragColor = image;\n}";
 },{}],"shaders/vertex.glsl":[function(require,module,exports) {
 module.exports = "#define GLSLIFY 1\nuniform float time;\nuniform float uProgress;\nuniform vec2 uResolution;\nuniform vec2 uQuadSize;\nuniform vec4 uCorners;\nvarying vec2 vSize;\n\nvarying vec2 vUv;\nvoid main() {\n    float PI = 3.1415926;\n    vUv = uv;\n    float sine = sin(PI*uProgress);\n    float waves = sine*0.1*sin(5.*length(uv) + 15.*uProgress);\n    vec4 defaultState = modelMatrix*vec4( position, 1.0 );\n    vec4 fullScreenState = vec4( position, 1.0 );\n    fullScreenState.x *=uResolution.x/uQuadSize.x;\n    fullScreenState.y *=uResolution.y/uQuadSize.y;\n    float cornersProgress = mix(\n        mix(uCorners.z,uCorners.w,uv.x),\n        mix(uCorners.x,uCorners.y,uv.x),\n        uv.y\n    );\n\n    vec4 finalState = mix(defaultState,fullScreenState,uProgress + waves);\n\n    vSize = mix(uQuadSize,uResolution,uProgress);\n\n    gl_Position = projectionMatrix * viewMatrix * finalState;\n}";
-},{}],"texture.jpg":[function(require,module,exports) {
-module.exports = "/texture.c370f71b.jpg";
+},{}],"img/1.jpg":[function(require,module,exports) {
+module.exports = "/1.dc197a9a.jpg";
 },{}],"../../../node_modules/dat.gui/build/dat.gui.module.js":[function(require,module,exports) {
 "use strict";
 
@@ -46512,7 +46512,7 @@ var THREE = _interopRequireWildcard(require("three"));
 var _OrbitControls = require("three/examples/jsm/controls/OrbitControls.js");
 var _fragment = _interopRequireDefault(require("./shaders/fragment.glsl"));
 var _vertex = _interopRequireDefault(require("./shaders/vertex.glsl"));
-var _texture = _interopRequireDefault(require("./texture.jpg"));
+var _ = _interopRequireDefault(require("./img/1.jpg"));
 var dat = _interopRequireWildcard(require("dat.gui"));
 var _gsap = _interopRequireDefault(require("gsap"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -46587,7 +46587,7 @@ var Sketch = exports.default = /*#__PURE__*/function () {
             value: 0
           },
           uTexture: {
-            value: new THREE.TextureLoader().load(_texture.default)
+            value: new THREE.TextureLoader().load(_.default)
           },
           uTextureSize: {
             value: new THREE.Vector2(100, 100)
@@ -46641,7 +46641,7 @@ var Sketch = exports.default = /*#__PURE__*/function () {
 new Sketch({
   domElement: document.getElementById('container')
 });
-},{"three":"../../../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls.js":"../../../node_modules/three/examples/jsm/controls/OrbitControls.js","./shaders/fragment.glsl":"shaders/fragment.glsl","./shaders/vertex.glsl":"shaders/vertex.glsl","./texture.jpg":"texture.jpg","dat.gui":"../../../node_modules/dat.gui/build/dat.gui.module.js","gsap":"../../../node_modules/gsap/index.js"}],"../../../.nvm/versions/node/v16.19.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"three":"../../../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls.js":"../../../node_modules/three/examples/jsm/controls/OrbitControls.js","./shaders/fragment.glsl":"shaders/fragment.glsl","./shaders/vertex.glsl":"shaders/vertex.glsl","./img/1.jpg":"img/1.jpg","dat.gui":"../../../node_modules/dat.gui/build/dat.gui.module.js","gsap":"../../../node_modules/gsap/index.js"}],"../../../.nvm/versions/node/v16.19.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -46666,7 +46666,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65368" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50518" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

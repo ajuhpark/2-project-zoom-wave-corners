@@ -5,6 +5,7 @@ import vertex from './shaders/vertex.glsl'
 import testTexture from './img/1.jpg';
 import * as dat from 'dat.gui'
 import gsap from 'gsap'
+import ASScroll from '@ashthornton/asscroll';
 
 
 export default class Sketch{
@@ -29,8 +30,12 @@ export default class Sketch{
         this.container.appendChild(this.renderer.domElement);
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
+        this.asscroll = new ASScroll();
         
-        
+        this.asscroll.enable({
+            horizontalScroll: true
+        })
+
         this.time = 0;
         this.setupSettings()
         this.resize()
@@ -63,7 +68,7 @@ export default class Sketch{
     }
 
     addObjects(){
-        this.geometry = new THREE.PlaneGeometry( 300, 300,100,100);
+        this.geometry = new THREE.PlaneGeometry( 1, 1,100,100);
         console.log(this.geometry)
         this.material = new THREE.ShaderMaterial({
             // wireframe: true,
@@ -99,16 +104,62 @@ export default class Sketch{
             },0.3)
 
         this.mesh = new THREE.Mesh( this.geometry, this.material );
-        this.scene.add( this.mesh );
+        this.mesh.scale.set(300,300,1)
+        // we remove the old mesh below because we're using the webgl images acquired in webgl
+        // this.scene.add( this.mesh );
         this.mesh.position.x = 300
         // this.mesh.rotation.z = 0.5
+
+        //selecting the images. This is a node list so we have to convert to array.
+        this.images = [...document.querySelectorAll('.js-image')];
+
+        this.materials = [];
+
+        this.imageStore = this.images.map(img=>{
+            // console log this to see if the webgl images are being stored
+            console.log(img)
+            // getting the coordinates for what we need on the window
+            let bounds = img.getBoundingClientRect();
+            // console.log(bounds);
+
+            let m = this.material.clone()
+            this.materials.push(m);
+            
+            //in three js we can create textures out of dom elements (below)
+            const image = new Image();
+            image.src = img.src;
+            let texture = new THREE.Texture(image);
+            // let texture = new THREE.Texture(img);
+            texture.needsUpdate = true;
+
+            m.uniforms.uTexture.value = texture;
+
+            let mesh = new THREE.Mesh(this.geometry, m);
+            this.scene.add(mesh)
+            // need to scale the mesh because prior to this it's 1 pixel
+            // this scales the mesh the correct size and puts in the middle
+            mesh.scale.set(bounds.width, bounds.height, 1)
+            console.log(mesh)
+            //return the properties of the object you created
+            return {
+                img: img,
+                mesh: mesh,
+                width: bounds.width,
+                height: bounds.height,
+                top: bounds.top,
+                left: bounds.left
+            }
+        })
+    
+            
+    
     }
 
     render(){
         this.time += 0.05;
         this.material.uniforms.time.value = this.time;
         this.material.uniforms.uProgress.value = this.settings.progress;
-        // this.tl.progress(this.settings.progress)
+        this.tl.progress(this.settings.progress)
         this.mesh.rotation.x = this.time / 2000;
         this.mesh.rotation.y = this.time / 1000;
 

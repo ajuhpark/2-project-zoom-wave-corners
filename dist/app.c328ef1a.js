@@ -38648,7 +38648,7 @@ var OrbitControls = exports.OrbitControls = /*#__PURE__*/function (_EventDispatc
 },{"three":"../../../node_modules/three/build/three.module.js"}],"shaders/fragment.glsl":[function(require,module,exports) {
 module.exports = "#define GLSLIFY 1\nuniform float time;\nuniform float uProgress;\nuniform vec2 uTextureSize;\nuniform sampler2D uTexture;\nvarying vec2 vUv;\n\nvarying vec2 vSize;\n\nvec2 getUV(vec2 uv, vec2 textureSize, vec2 quadSize){\n    vec2 tempUV = uv - vec2(0.5);\n\n    float quadAspect = quadSize.x/quadSize.y;\n    float textureAspect = textureSize.x/textureSize.y;\n    if(quadAspect<textureAspect){\n        tempUV = tempUV*vec2(quadAspect/textureAspect,1.);\n    } else{\n        tempUV = tempUV*vec2(1.,textureAspect/quadAspect);\n    }\n\n    tempUV += vec2(0.5);\n    return tempUV;\n}\nvoid main() {\n\n    vec2 correctUV = getUV(vUv,uTextureSize,vSize);\n    vec4 image = texture(uTexture,correctUV);\n    gl_FragColor = vec4( vUv,0.,1.);\n    gl_FragColor = image;\n}";
 },{}],"shaders/vertex.glsl":[function(require,module,exports) {
-module.exports = "#define GLSLIFY 1\nuniform float time;\nuniform float uProgress;\nuniform vec2 uResolution;\nuniform vec2 uQuadSize;\nuniform vec4 uCorners;\nvarying vec2 vSize;\n\nvarying vec2 vUv;\nvoid main() {\n    float PI = 3.1415926;\n    vUv = uv;\n    float sine = sin(PI*uProgress);\n    float waves = sine*0.1*sin(5.*length(uv) + 15.*uProgress);\n    vec4 defaultState = modelMatrix*vec4( position, 1.0 );\n    vec4 fullScreenState = vec4( position, 1.0 );\n    fullScreenState.x *=uResolution.x/uQuadSize.x;\n    fullScreenState.y *=uResolution.y/uQuadSize.y;\n    float cornersProgress = mix(\n        mix(uCorners.z,uCorners.w,uv.x),\n        mix(uCorners.x,uCorners.y,uv.x),\n        uv.y\n    );\n\n    vec4 finalState = mix(defaultState,fullScreenState,uProgress + waves);\n\n    vSize = mix(uQuadSize,uResolution,uProgress);\n\n    gl_Position = projectionMatrix * viewMatrix * finalState;\n}";
+module.exports = "#define GLSLIFY 1\nuniform float time;\nuniform float uProgress;\nuniform vec2 uResolution;\nuniform vec2 uQuadSize;\nuniform vec4 uCorners;\nvarying vec2 vSize;\n\nvarying vec2 vUv;\nvoid main() {\n    float PI = 3.1415926;\n    vUv = uv;\n    float sine = sin(PI*uProgress);\n    float waves = sine*0.1*sin(5.*length(uv) + 15.*uProgress);\n    vec4 defaultState = modelMatrix*vec4( position, 1.0 );\n    vec4 fullScreenState = vec4( position, 1.0 );\n    fullScreenState.x *=uResolution.x;\n    fullScreenState.y *=uResolution.y;\n    float cornersProgress = mix(\n        mix(uCorners.z,uCorners.w,uv.x),\n        mix(uCorners.x,uCorners.y,uv.x),\n        uv.y\n    );\n\n    // vec4 finalState = mix(defaultState,fullScreenState,uProgress + waves);\n    vec4 finalState = mix(defaultState,fullScreenState,cornersProgress);\n\n    vSize = mix(uQuadSize,uResolution,cornersProgress);\n\n    gl_Position = projectionMatrix * viewMatrix * finalState;\n}";
 },{}],"img/1.jpg":[function(require,module,exports) {
 module.exports = "/1.dc197a9a.jpg";
 },{}],"../../../node_modules/dat.gui/build/dat.gui.module.js":[function(require,module,exports) {
@@ -46501,7 +46501,1810 @@ var _CSSPlugin = require("./CSSPlugin.js");
 var gsapWithCSS = exports.default = exports.gsap = _gsapCore.gsap.registerPlugin(_CSSPlugin.CSSPlugin) || _gsapCore.gsap,
   // to protect from tree shaking
   TweenMaxWithCSS = exports.TweenMax = gsapWithCSS.core.Tween;
-},{"./gsap-core.js":"../../../node_modules/gsap/gsap-core.js","./CSSPlugin.js":"../../../node_modules/gsap/CSSPlugin.js"}],"app.js":[function(require,module,exports) {
+},{"./gsap-core.js":"../../../node_modules/gsap/gsap-core.js","./CSSPlugin.js":"../../../node_modules/gsap/CSSPlugin.js"}],"../../../node_modules/@ashthornton/asscroll/build/asscroll.js":[function(require,module,exports) {
+var define;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+(function webpackUniversalModuleDefinition(root, factory) {
+  if ((typeof exports === "undefined" ? "undefined" : _typeof(exports)) === 'object' && (typeof module === "undefined" ? "undefined" : _typeof(module)) === 'object') module.exports = factory();else if (typeof define === 'function' && define.amd) define([], factory);else if ((typeof exports === "undefined" ? "undefined" : _typeof(exports)) === 'object') exports["ASScroll"] = factory();else root["ASScroll"] = factory();
+})(self, function () {
+  return /******/function () {
+    // webpackBootstrap
+    /******/
+    var __webpack_modules__ = {
+      /***/672: ( /***/function _(module) {
+        var store = {
+          html: document.documentElement,
+          body: document.body,
+          window: {
+            w: window.innerWidth,
+            h: window.innerHeight
+          }
+        };
+        module.exports = store;
+
+        /***/
+      }),
+      /***/336: ( /***/function _(module) {
+        module.exports = function debounce(fn, delay) {
+          var timeoutID = null;
+          return function () {
+            clearTimeout(timeoutID);
+            var args = arguments;
+            var that = this;
+            timeoutID = setTimeout(function () {
+              fn.apply(that, args);
+            }, delay);
+          };
+        };
+
+        /***/
+      })
+
+      /******/
+    };
+    /************************************************************************/
+    /******/ // The module cache
+    /******/
+    var __webpack_module_cache__ = {};
+    /******/
+    /******/ // The require function
+    /******/
+    function __webpack_require__(moduleId) {
+      /******/ // Check if module is in cache
+      /******/var cachedModule = __webpack_module_cache__[moduleId];
+      /******/
+      if (cachedModule !== undefined) {
+        /******/return cachedModule.exports;
+        /******/
+      }
+      /******/ // Create a new module (and put it into the cache)
+      /******/
+      var module = __webpack_module_cache__[moduleId] = {
+        /******/ // no module.id needed
+        /******/ // no module.loaded needed
+        /******/exports: {}
+        /******/
+      };
+      /******/
+      /******/ // Execute the module function
+      /******/
+      __webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+      /******/
+      /******/ // Return the exports of the module
+      /******/
+      return module.exports;
+      /******/
+    }
+    /******/
+    /************************************************************************/
+    /******/ /* webpack/runtime/compat get default export */
+    /******/
+    !function () {
+      /******/ // getDefaultExport function for compatibility with non-harmony modules
+      /******/__webpack_require__.n = function (module) {
+        /******/var getter = module && module.__esModule ? /******/function () {
+          return module['default'];
+        } : /******/function () {
+          return module;
+        };
+        /******/
+        __webpack_require__.d(getter, {
+          a: getter
+        });
+        /******/
+        return getter;
+        /******/
+      };
+      /******/
+    }();
+    /******/
+    /******/ /* webpack/runtime/define property getters */
+    /******/
+    !function () {
+      /******/ // define getter functions for harmony exports
+      /******/__webpack_require__.d = function (exports, definition) {
+        /******/for (var key in definition) {
+          /******/if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+            /******/Object.defineProperty(exports, key, {
+              enumerable: true,
+              get: definition[key]
+            });
+            /******/
+          }
+          /******/
+        }
+        /******/
+      };
+      /******/
+    }();
+    /******/
+    /******/ /* webpack/runtime/hasOwnProperty shorthand */
+    /******/
+    !function () {
+      /******/__webpack_require__.o = function (obj, prop) {
+        return Object.prototype.hasOwnProperty.call(obj, prop);
+      };
+      /******/
+    }();
+    /******/
+    /************************************************************************/
+    var __webpack_exports__ = {};
+    // This entry need to be wrapped in an IIFE because it need to be in strict mode.
+    !function () {
+      "use strict";
+
+      // EXPORTS
+      __webpack_require__.d(__webpack_exports__, {
+        "default": function _default() {
+          return /* binding */src;
+        }
+      });
+
+      // EXTERNAL MODULE: ./src/utils/debounce.js
+      var debounce = __webpack_require__(336);
+      var debounce_default = /*#__PURE__*/__webpack_require__.n(debounce);
+      // EXTERNAL MODULE: ./src/store.js
+      var store = __webpack_require__(672);
+      var store_default = /*#__PURE__*/__webpack_require__.n(store);
+      ; // CONCATENATED MODULE: ./node_modules/selector-set/selector-set.next.js
+      // Public: Create a new SelectorSet.
+      function SelectorSet() {
+        // Construct new SelectorSet if called as a function.
+        if (!(this instanceof SelectorSet)) {
+          return new SelectorSet();
+        }
+
+        // Public: Number of selectors added to the set
+        this.size = 0;
+
+        // Internal: Incrementing ID counter
+        this.uid = 0;
+
+        // Internal: Array of String selectors in the set
+        this.selectors = [];
+
+        // Internal: Map of selector ids to objects
+        this.selectorObjects = {};
+
+        // Internal: All Object index String names mapping to Index objects.
+        this.indexes = Object.create(this.indexes);
+
+        // Internal: Used Object index String names mapping to Index objects.
+        this.activeIndexes = [];
+      }
+
+      // Detect prefixed Element#matches function.
+      var docElem = window.document.documentElement;
+      var matches = docElem.matches || docElem.webkitMatchesSelector || docElem.mozMatchesSelector || docElem.oMatchesSelector || docElem.msMatchesSelector;
+
+      // Public: Check if element matches selector.
+      //
+      // Maybe overridden with custom Element.matches function.
+      //
+      // el       - An Element
+      // selector - String CSS selector
+      //
+      // Returns true or false.
+      SelectorSet.prototype.matchesSelector = function (el, selector) {
+        return matches.call(el, selector);
+      };
+
+      // Public: Find all elements in the context that match the selector.
+      //
+      // Maybe overridden with custom querySelectorAll function.
+      //
+      // selectors - String CSS selectors.
+      // context   - Element context
+      //
+      // Returns non-live list of Elements.
+      SelectorSet.prototype.querySelectorAll = function (selectors, context) {
+        return context.querySelectorAll(selectors);
+      };
+
+      // Public: Array of indexes.
+      //
+      // name     - Unique String name
+      // selector - Function that takes a String selector and returns a String key
+      //            or undefined if it can't be used by the index.
+      // element  - Function that takes an Element and returns an Array of String
+      //            keys that point to indexed values.
+      //
+      SelectorSet.prototype.indexes = [];
+
+      // Index by element id
+      var idRe = /^#((?:[\w\u00c0-\uFFFF\-]|\\.)+)/g;
+      SelectorSet.prototype.indexes.push({
+        name: 'ID',
+        selector: function matchIdSelector(sel) {
+          var m;
+          if (m = sel.match(idRe)) {
+            return m[0].slice(1);
+          }
+        },
+        element: function getElementId(el) {
+          if (el.id) {
+            return [el.id];
+          }
+        }
+      });
+
+      // Index by all of its class names
+      var classRe = /^\.((?:[\w\u00c0-\uFFFF\-]|\\.)+)/g;
+      SelectorSet.prototype.indexes.push({
+        name: 'CLASS',
+        selector: function matchClassSelector(sel) {
+          var m;
+          if (m = sel.match(classRe)) {
+            return m[0].slice(1);
+          }
+        },
+        element: function getElementClassNames(el) {
+          var className = el.className;
+          if (className) {
+            if (typeof className === 'string') {
+              return className.split(/\s/);
+            } else if (_typeof(className) === 'object' && 'baseVal' in className) {
+              // className is a SVGAnimatedString
+              // global SVGAnimatedString is not an exposed global in Opera 12
+              return className.baseVal.split(/\s/);
+            }
+          }
+        }
+      });
+
+      // Index by tag/node name: `DIV`, `FORM`, `A`
+      var tagRe = /^((?:[\w\u00c0-\uFFFF\-]|\\.)+)/g;
+      SelectorSet.prototype.indexes.push({
+        name: 'TAG',
+        selector: function matchTagSelector(sel) {
+          var m;
+          if (m = sel.match(tagRe)) {
+            return m[0].toUpperCase();
+          }
+        },
+        element: function getElementTagName(el) {
+          return [el.nodeName.toUpperCase()];
+        }
+      });
+
+      // Default index just contains a single array of elements.
+      SelectorSet.prototype.indexes['default'] = {
+        name: 'UNIVERSAL',
+        selector: function selector() {
+          return true;
+        },
+        element: function element() {
+          return [true];
+        }
+      };
+
+      // Use ES Maps when supported
+      var Map;
+      if (typeof window.Map === 'function') {
+        Map = window.Map;
+      } else {
+        Map = function () {
+          function Map() {
+            this.map = {};
+          }
+          Map.prototype.get = function (key) {
+            return this.map[key + ' '];
+          };
+          Map.prototype.set = function (key, value) {
+            this.map[key + ' '] = value;
+          };
+          return Map;
+        }();
+      }
+
+      // Regexps adopted from Sizzle
+      //   https://github.com/jquery/sizzle/blob/1.7/sizzle.js
+      //
+      var chunker = /((?:\((?:\([^()]+\)|[^()]+)+\)|\[(?:\[[^\[\]]*\]|['"][^'"]*['"]|[^\[\]'"]+)+\]|\\.|[^ >+~,(\[\\]+)+|[>+~])(\s*,\s*)?((?:.|\r|\n)*)/g;
+
+      // Internal: Get indexes for selector.
+      //
+      // selector - String CSS selector
+      //
+      // Returns Array of {index, key}.
+      function parseSelectorIndexes(allIndexes, selector) {
+        allIndexes = allIndexes.slice(0).concat(allIndexes['default']);
+        var allIndexesLen = allIndexes.length,
+          i,
+          j,
+          m,
+          dup,
+          rest = selector,
+          key,
+          index,
+          indexes = [];
+        do {
+          chunker.exec('');
+          if (m = chunker.exec(rest)) {
+            rest = m[3];
+            if (m[2] || !rest) {
+              for (i = 0; i < allIndexesLen; i++) {
+                index = allIndexes[i];
+                if (key = index.selector(m[1])) {
+                  j = indexes.length;
+                  dup = false;
+                  while (j--) {
+                    if (indexes[j].index === index && indexes[j].key === key) {
+                      dup = true;
+                      break;
+                    }
+                  }
+                  if (!dup) {
+                    indexes.push({
+                      index: index,
+                      key: key
+                    });
+                  }
+                  break;
+                }
+              }
+            }
+          }
+        } while (m);
+        return indexes;
+      }
+
+      // Internal: Find first item in Array that is a prototype of `proto`.
+      //
+      // ary   - Array of objects
+      // proto - Prototype of expected item in `ary`
+      //
+      // Returns object from `ary` if found. Otherwise returns undefined.
+      function findByPrototype(ary, proto) {
+        var i, len, item;
+        for (i = 0, len = ary.length; i < len; i++) {
+          item = ary[i];
+          if (proto.isPrototypeOf(item)) {
+            return item;
+          }
+        }
+      }
+
+      // Public: Log when added selector falls under the default index.
+      //
+      // This API should not be considered stable. May change between
+      // minor versions.
+      //
+      // obj - {selector, data} Object
+      //
+      //   SelectorSet.prototype.logDefaultIndexUsed = function(obj) {
+      //     console.warn(obj.selector, "could not be indexed");
+      //   };
+      //
+      // Returns nothing.
+      SelectorSet.prototype.logDefaultIndexUsed = function () {};
+
+      // Public: Add selector to set.
+      //
+      // selector - String CSS selector
+      // data     - Optional data Object (default: undefined)
+      //
+      // Returns nothing.
+      SelectorSet.prototype.add = function (selector, data) {
+        var obj,
+          i,
+          indexProto,
+          key,
+          index,
+          objs,
+          selectorIndexes,
+          selectorIndex,
+          indexes = this.activeIndexes,
+          selectors = this.selectors,
+          selectorObjects = this.selectorObjects;
+        if (typeof selector !== 'string') {
+          return;
+        }
+        obj = {
+          id: this.uid++,
+          selector: selector,
+          data: data
+        };
+        selectorObjects[obj.id] = obj;
+        selectorIndexes = parseSelectorIndexes(this.indexes, selector);
+        for (i = 0; i < selectorIndexes.length; i++) {
+          selectorIndex = selectorIndexes[i];
+          key = selectorIndex.key;
+          indexProto = selectorIndex.index;
+          index = findByPrototype(indexes, indexProto);
+          if (!index) {
+            index = Object.create(indexProto);
+            index.map = new Map();
+            indexes.push(index);
+          }
+          if (indexProto === this.indexes['default']) {
+            this.logDefaultIndexUsed(obj);
+          }
+          objs = index.map.get(key);
+          if (!objs) {
+            objs = [];
+            index.map.set(key, objs);
+          }
+          objs.push(obj);
+        }
+        this.size++;
+        selectors.push(selector);
+      };
+
+      // Public: Remove selector from set.
+      //
+      // selector - String CSS selector
+      // data     - Optional data Object (default: undefined)
+      //
+      // Returns nothing.
+      SelectorSet.prototype.remove = function (selector, data) {
+        if (typeof selector !== 'string') {
+          return;
+        }
+        var selectorIndexes,
+          selectorIndex,
+          i,
+          j,
+          k,
+          selIndex,
+          objs,
+          obj,
+          indexes = this.activeIndexes,
+          selectors = this.selectors = [],
+          selectorObjects = this.selectorObjects,
+          removedIds = {},
+          removeAll = arguments.length === 1;
+        selectorIndexes = parseSelectorIndexes(this.indexes, selector);
+        for (i = 0; i < selectorIndexes.length; i++) {
+          selectorIndex = selectorIndexes[i];
+          j = indexes.length;
+          while (j--) {
+            selIndex = indexes[j];
+            if (selectorIndex.index.isPrototypeOf(selIndex)) {
+              objs = selIndex.map.get(selectorIndex.key);
+              if (objs) {
+                k = objs.length;
+                while (k--) {
+                  obj = objs[k];
+                  if (obj.selector === selector && (removeAll || obj.data === data)) {
+                    objs.splice(k, 1);
+                    removedIds[obj.id] = true;
+                  }
+                }
+              }
+              break;
+            }
+          }
+        }
+        for (i in removedIds) {
+          delete selectorObjects[i];
+          this.size--;
+        }
+        for (i in selectorObjects) {
+          selectors.push(selectorObjects[i].selector);
+        }
+      };
+
+      // Sort by id property handler.
+      //
+      // a - Selector obj.
+      // b - Selector obj.
+      //
+      // Returns Number.
+      function sortById(a, b) {
+        return a.id - b.id;
+      }
+
+      // Public: Find all matching decendants of the context element.
+      //
+      // context - An Element
+      //
+      // Returns Array of {selector, data, elements} matches.
+      SelectorSet.prototype.queryAll = function (context) {
+        if (!this.selectors.length) {
+          return [];
+        }
+        var matches = {},
+          results = [];
+        var els = this.querySelectorAll(this.selectors.join(', '), context);
+        var i, j, len, len2, el, m, match, obj;
+        for (i = 0, len = els.length; i < len; i++) {
+          el = els[i];
+          m = this.matches(el);
+          for (j = 0, len2 = m.length; j < len2; j++) {
+            obj = m[j];
+            if (!matches[obj.id]) {
+              match = {
+                id: obj.id,
+                selector: obj.selector,
+                data: obj.data,
+                elements: []
+              };
+              matches[obj.id] = match;
+              results.push(match);
+            } else {
+              match = matches[obj.id];
+            }
+            match.elements.push(el);
+          }
+        }
+        return results.sort(sortById);
+      };
+
+      // Public: Match element against all selectors in set.
+      //
+      // el - An Element
+      //
+      // Returns Array of {selector, data} matches.
+      SelectorSet.prototype.matches = function (el) {
+        if (!el) {
+          return [];
+        }
+        var i, j, k, len, len2, len3, index, keys, objs, obj, id;
+        var indexes = this.activeIndexes,
+          matchedIds = {},
+          matches = [];
+        for (i = 0, len = indexes.length; i < len; i++) {
+          index = indexes[i];
+          keys = index.element(el);
+          if (keys) {
+            for (j = 0, len2 = keys.length; j < len2; j++) {
+              if (objs = index.map.get(keys[j])) {
+                for (k = 0, len3 = objs.length; k < len3; k++) {
+                  obj = objs[k];
+                  id = obj.id;
+                  if (!matchedIds[id] && this.matchesSelector(el, obj.selector)) {
+                    matchedIds[id] = true;
+                    matches.push(obj);
+                  }
+                }
+              }
+            }
+          }
+        }
+        return matches.sort(sortById);
+      };
+      ; // CONCATENATED MODULE: ./node_modules/@unseenco/e/src/utils.js
+      /**
+       * Holds the SelectorSets for each event type
+       * @type {{}}
+       */
+      var eventTypes = {};
+
+      /**
+       * Holds Bus event stacks
+       * @type {{}}
+       */
+      var listeners = {};
+
+      /**
+       * Events that don't bubble
+       * @type {string[]}
+       */
+      var nonBubblers = ['mouseenter', 'mouseleave', 'pointerenter', 'pointerleave'];
+
+      /**
+       * Make a bus stack if not already created.
+       *
+       * @param {string} event
+       */
+      function makeBusStack(event) {
+        if (listeners[event] === undefined) {
+          listeners[event] = [];
+        }
+      }
+
+      /**
+       * Trigger a bus stack.
+       *
+       * @param {string} event
+       * @param args
+       */
+      function triggerBus(event, args) {
+        if (listeners[event]) {
+          for (var i = 0; i < listeners[event].length; i++) {
+            var _listeners$event;
+            (_listeners$event = listeners[event])[i].apply(_listeners$event, _toConsumableArray(args));
+          }
+        }
+      }
+
+      /**
+       * Maybe run querySelectorAll if input is a string.
+       *
+       * @param {HTMLElement|Element|string} el
+       * @returns {NodeListOf<Element>}
+       */
+      function maybeRunQuerySelector(el) {
+        return typeof el === 'string' ? document.querySelectorAll(el) : el;
+      }
+
+      /**
+       * Handle delegated events
+       *
+       * @param {Event} e
+       */
+      function handleDelegation(e) {
+        var matches = traverse(eventTypes[e.type], e.target);
+        if (matches.length) {
+          for (var i = 0; i < matches.length; i++) {
+            for (var i2 = 0; i2 < matches[i].stack.length; i2++) {
+              if (nonBubblers.indexOf(e.type) !== -1) {
+                addDelegateTarget(e, matches[i].delegatedTarget);
+                if (e.target === matches[i].delegatedTarget) {
+                  matches[i].stack[i2].data(e);
+                }
+              } else {
+                addDelegateTarget(e, matches[i].delegatedTarget);
+                matches[i].stack[i2].data(e);
+              }
+            }
+          }
+        }
+      }
+
+      /**
+       * Find a matching selector for delegation
+       *
+       * @param {SelectorSet} listeners
+       * @param {HTMLElement|Element|EventTarget} target
+       * @returns {[]}
+       */
+      function traverse(listeners, target) {
+        var queue = [];
+        var node = target;
+        do {
+          if (node.nodeType !== 1) {
+            break;
+          }
+          var _matches = listeners.matches(node);
+          if (_matches.length) {
+            queue.push({
+              delegatedTarget: node,
+              stack: _matches
+            });
+          }
+        } while (node = node.parentElement);
+        return queue;
+      }
+
+      /**
+       * Add delegatedTarget attribute to dispatched delegated events
+       *
+       * @param {Event} event
+       * @param {HTMLElement|Element} delegatedTarget
+       */
+      function addDelegateTarget(event, delegatedTarget) {
+        Object.defineProperty(event, 'currentTarget', {
+          configurable: true,
+          enumerable: true,
+          get: function get() {
+            return delegatedTarget;
+          }
+        });
+      }
+
+      /**
+       * Creates a deep clone of an object.
+       *
+       * @param object
+       * @returns {object|array}
+       */
+      function clone(object) {
+        return JSON.parse(JSON.stringify(object));
+      }
+      ; // CONCATENATED MODULE: ./node_modules/@unseenco/e/src/e.js
+
+      /**
+       * Public API
+       */
+      var E = /*#__PURE__*/function () {
+        function E() {
+          _classCallCheck(this, E);
+        }
+        return _createClass(E, [{
+          key: "bindAll",
+          value:
+          /**
+           * Binds all provided methods to a provided context.
+           *
+           * @param {object} context
+           * @param {string[]} [methods] Optional.
+           */
+          function bindAll(context, methods) {
+            if (!methods) {
+              methods = Object.getOwnPropertyNames(Object.getPrototypeOf(context));
+            }
+            for (var i = 0; i < methods.length; i++) {
+              context[methods[i]] = context[methods[i]].bind(context);
+            }
+          }
+
+          /**
+          * Bind event to a string, NodeList, or element.
+          *
+          * @param {string} event
+          * @param {string|NodeList|HTMLElement|Element|Window|Document|array|function} el
+          * @param {*} [callback]
+          * @param {{}|boolean} [options]
+          */
+        }, {
+          key: "on",
+          value: function on(event, el, callback, options) {
+            var events = event.split(' ');
+            for (var i = 0; i < events.length; i++) {
+              if (typeof el === 'function' && callback === undefined) {
+                makeBusStack(events[i]);
+                listeners[events[i]].push(el);
+                continue;
+              }
+              if (el.nodeType && el.nodeType === 1 || el === window || el === document) {
+                el.addEventListener(events[i], callback, options);
+                continue;
+              }
+              el = maybeRunQuerySelector(el);
+              for (var n = 0; n < el.length; n++) {
+                el[n].addEventListener(events[i], callback, options);
+              }
+            }
+          }
+
+          /**
+           * Add a delegated event.
+           *
+           * @param {string} event
+           * @param {string|NodeList|HTMLElement|Element} delegate
+           * @param {*} [callback]
+           */
+        }, {
+          key: "delegate",
+          value: function delegate(event, _delegate, callback) {
+            var events = event.split(' ');
+            for (var i = 0; i < events.length; i++) {
+              var map = eventTypes[events[i]];
+              if (map === undefined) {
+                map = new SelectorSet();
+                eventTypes[events[i]] = map;
+                if (nonBubblers.indexOf(events[i]) !== -1) {
+                  document.addEventListener(events[i], handleDelegation, true);
+                } else {
+                  document.addEventListener(events[i], handleDelegation);
+                }
+              }
+              map.add(_delegate, callback);
+            }
+          }
+
+          /**
+           * Remove a callback from a DOM element, or one or all Bus events.
+           *
+           * @param {string} event
+           * @param {string|NodeList|HTMLElement|Element|window|Undefined} [el]
+           * @param {*} [callback]
+          * @param {{}|boolean} [options]
+           */
+        }, {
+          key: "off",
+          value: function off(event, el, callback, options) {
+            var events = event.split(' ');
+            for (var i = 0; i < events.length; i++) {
+              if (el === undefined) {
+                listeners[events[i]] = [];
+                continue;
+              }
+              if (typeof el === 'function') {
+                makeBusStack(events[i]);
+                for (var n = 0; n < listeners[events[i]].length; n++) {
+                  if (listeners[events[i]][n] === el) {
+                    listeners[events[i]].splice(n, 1);
+                  }
+                }
+                continue;
+              }
+              var map = eventTypes[events[i]];
+              if (map !== undefined) {
+                map.remove(el, callback);
+                if (map.size === 0) {
+                  delete eventTypes[events[i]];
+                  if (nonBubblers.indexOf(events[i]) !== -1) {
+                    document.removeEventListener(events[i], handleDelegation, true);
+                  } else {
+                    document.removeEventListener(events[i], handleDelegation);
+                  }
+                  continue;
+                }
+              }
+              if (el.removeEventListener !== undefined) {
+                el.removeEventListener(events[i], callback, options);
+                continue;
+              }
+              el = maybeRunQuerySelector(el);
+              for (var _n = 0; _n < el.length; _n++) {
+                el[_n].removeEventListener(events[i], callback, options);
+              }
+            }
+          }
+
+          /**
+           * Emit a DOM or Bus event.
+           *
+           * @param {string} event
+           * @param {...*} args
+           */
+        }, {
+          key: "emit",
+          value: function emit(event, ...args) {
+            triggerBus(event, args);
+          }
+
+          /**
+           * Return a clone of the delegated event stack for debugging.
+           *
+           * @returns {{}}
+           */
+        }, {
+          key: "debugDelegated",
+          value: function debugDelegated() {
+            return clone(eventTypes);
+          }
+
+          /**
+           * Return a clone of the bus event stack for debugging.
+           *
+           * @returns {array}
+           */
+        }, {
+          key: "debugBus",
+          value: function debugBus() {
+            return clone(listeners);
+          }
+        }]);
+      }();
+      var instance = new E();
+      /* harmony default export */
+      var src_e = instance;
+      ; // CONCATENATED MODULE: ./src/Events.js
+      function _defineProperty(obj, key, value) {
+        if (key in obj) {
+          Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+          });
+        } else {
+          obj[key] = value;
+        }
+        return obj;
+      }
+      var Events = /*#__PURE__*/function () {
+        function Events(options = {}) {
+          var _this = this;
+          _classCallCheck(this, Events);
+          _defineProperty(this, "onRaf", function () {
+            src_e.emit(Events.INTERNALRAF);
+            if (_this.options.disableRaf) return;
+            requestAnimationFrame(_this.onRaf);
+          });
+          this.options = options;
+          this.addEvents();
+        }
+        return _createClass(Events, [{
+          key: "addEvents",
+          value: function addEvents() {
+            var _this2 = this;
+            if (!this.options.disableRaf) {
+              requestAnimationFrame(this.onRaf);
+            }
+            if (!this.options.disableResize) {
+              src_e.on('resize', window, debounce_default()(function () {
+                _this2.onResize();
+              }, 150));
+            }
+            this.onScroll();
+            if ('ontouchstart' in document.documentElement) {
+              store_default().isTouch = true; // touch has been detected in the browser, but let's check for a mouse input
+
+              this.detectMouse();
+            }
+          }
+        }, {
+          key: "onScroll",
+          value: function onScroll() {
+            src_e.on('wheel', window, function (e) {
+              src_e.emit(Events.WHEEL, {
+                event: e
+              });
+            }, {
+              passive: false
+            });
+            src_e.on('scroll', window, function (e) {
+              src_e.emit(Events.INTERNALSCROLL, {
+                event: e
+              });
+            }, {
+              passive: true
+            });
+          }
+        }, {
+          key: "onResize",
+          value: function onResize({
+            width: width,
+            height: height
+          } = {}) {
+            store_default().window.w = width || window.innerWidth;
+            store_default().window.h = height || window.innerHeight;
+            src_e.emit(Events.RESIZE);
+          }
+        }, {
+          key: "detectMouse",
+          value: function detectMouse() {
+            window.addEventListener('mousemove', function detectMouse(e) {
+              if (Math.abs(e.movementX) > 0 || Math.abs(e.movementY) > 0) {
+                // mouse has moved on touch screen, not just a tap firing mousemove
+                store_default().isTouch = false;
+                src_e.emit(Events.MOUSEDETECTED);
+                window.removeEventListener('mousemove', detectMouse);
+              }
+            });
+          }
+        }]);
+      }();
+      _defineProperty(Events, "INTERNALRAF", 'raf:internal');
+      _defineProperty(Events, "EXTERNALRAF", 'raf:external');
+      _defineProperty(Events, "WHEEL", 'wheel');
+      _defineProperty(Events, "INTERNALSCROLL", 'scroll:internal');
+      _defineProperty(Events, "EXTERNALSCROLL", 'scroll:external');
+      _defineProperty(Events, "RESIZE", 'resize');
+      _defineProperty(Events, "MOUSEDETECTED", 'mouseDetected');
+      _defineProperty(Events, "SCROLLEND", 'scrollEnd');
+      ; // CONCATENATED MODULE: ./src/Scrollbar.js
+      function Scrollbar_defineProperty(obj, key, value) {
+        if (key in obj) {
+          Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+          });
+        } else {
+          obj[key] = value;
+        }
+        return obj;
+      }
+      var Scrollbar = /*#__PURE__*/function () {
+        function Scrollbar(controller) {
+          var _this3 = this;
+          _classCallCheck(this, Scrollbar);
+          Scrollbar_defineProperty(this, "onMouseMove", function (e) {
+            if (!_this3.mouseDown) return;
+            _this3.mousePos = e.clientY;
+            _this3.position -= _this3.prevMousePos - _this3.mousePos;
+            _this3.position = Math.min(Math.max(_this3.position, 0), _this3.maxY);
+            _this3.prevMousePos = _this3.mousePos;
+            _this3.controller.targetPos = _this3.position / _this3.maxY * _this3.controller.maxScroll;
+            _this3.controller.clamp();
+            _this3.controller.syncScroll = true;
+            _this3.transform();
+            src_e.emit(Events.EXTERNALSCROLL, -_this3.controller.targetPos);
+          });
+          Scrollbar_defineProperty(this, "onMouseDown", function (e) {
+            _this3.mousePos = _this3.prevMousePos = e.clientY;
+            _this3.mouseDown = true;
+            store_default().body.style.userSelect = 'none';
+            _this3.el.classList.add('active');
+          });
+          Scrollbar_defineProperty(this, "onMouseUp", function () {
+            _this3.mouseDown = false;
+            store_default().body.style.removeProperty('user-select');
+            _this3.el.classList.remove('active');
+          });
+          this.controller = controller;
+          this.addHTML();
+          this.el = document.querySelector(this.controller.options.scrollbarEl);
+          this.handle = document.querySelector(this.controller.options.scrollbarHandleEl);
+          this.position = 0;
+          this.mousePos = 0;
+          this.prevMousePos = 0;
+          this.addStyles();
+          this.addEvents();
+        }
+        return _createClass(Scrollbar, [{
+          key: "transform",
+          value: function transform() {
+            var y;
+            if (this.mouseDown) {
+              y = this.position;
+            } else {
+              y = -this.controller.targetPos / -this.controller.maxScroll * (store_default().window.h - this.handleHeight);
+              this.position = y;
+            }
+            this.handle.style.transform = "translate3d(0, ".concat(y, "px, 0)");
+          }
+        }, {
+          key: "show",
+          value: function show() {
+            this.el.classList.add('show');
+          }
+        }, {
+          key: "hide",
+          value: function hide() {
+            this.el.classList.remove('show');
+          }
+        }, {
+          key: "addEvents",
+          value: function addEvents() {
+            src_e.on('mousedown', this.handle, this.onMouseDown);
+            src_e.on('mousemove', window, this.onMouseMove);
+            src_e.on('mouseup', window, this.onMouseUp);
+          }
+        }, {
+          key: "onResize",
+          value: function onResize() {
+            this.scale = (-this.controller.maxScroll + store_default().window.h) / store_default().window.h;
+            if (this.scale <= 1) {
+              this.handle.style.height = 0;
+              return;
+            }
+            this.trueSize = store_default().window.h / this.scale;
+            this.handleHeight = Math.max(this.trueSize, 40);
+            this.handle.style.height = "".concat(this.handleHeight, "px");
+            this.maxY = store_default().window.h - this.handleHeight;
+          }
+        }, {
+          key: "addHTML",
+          value: function addHTML() {
+            if (document.querySelector(this.controller.options.scrollbarEl)) return;
+            var div = document.createElement('div');
+            div.classList.add(this.controller.options.scrollbarEl.substring(1));
+            div.innerHTML = "<div class=\"".concat(this.controller.options.scrollbarHandleEl.substring(1), "\"><div></div></div>");
+            document.body.appendChild(div);
+          }
+        }, {
+          key: "addStyles",
+          value: function addStyles() {
+            if (!this.controller.options.disableNativeScrollbar && !this.controller.options.scrollbarStyles) return;
+            var styles = '';
+            if (this.controller.options.disableNativeScrollbar) {
+              styles += "html{scrollbar-width:none;}body{-ms-overflow-style:none;}body::-webkit-scrollbar{width:0;height:0;}";
+            }
+            if (this.controller.options.scrollbarStyles) {
+              styles += "".concat(this.controller.options.scrollbarEl, " {position:fixed;top:0;right:0;width:20px;height:100%;z-index:900;}.is-touch ").concat(this.controller.options.scrollbarEl, " {display:none;}").concat(this.controller.options.scrollbarEl, " > div {padding:6px 0;width:10px;height:0;margin:0 auto;visibility:hidden;}").concat(this.controller.options.scrollbarEl, " > div > div {width:100%;height:100%;border-radius:10px;opacity:0.3;background-color:#000;}").concat(this.controller.options.scrollbarEl, " > div > div:hover {opacity:0.9;}").concat(this.controller.options.scrollbarEl, ":hover > div, ").concat(this.controller.options.scrollbarEl, ".show > div, ").concat(this.controller.options.scrollbarEl, ".active > div {visibility:visible;}").concat(this.controller.options.scrollbarEl, ".active > div > div {opacity:0.9;}");
+            }
+            var css = document.createElement('style');
+            if (css.styleSheet) css.styleSheet.cssText = styles;else css.appendChild(document.createTextNode(styles));
+            document.getElementsByTagName("head")[0].appendChild(css);
+          }
+        }, {
+          key: "destroy",
+          value: function destroy() {
+            src_e.off('mousedown', this.handle, this.onMouseDown);
+            src_e.off('mousemove', window, this.onMouseMove);
+            src_e.off('mouseup', window, this.onMouseUp);
+          }
+        }]);
+      }();
+      ; // CONCATENATED MODULE: ./src/Controller.js
+      function Controller_defineProperty(obj, key, value) {
+        if (key in obj) {
+          Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+          });
+        } else {
+          obj[key] = value;
+        }
+        return obj;
+      }
+      var Controller = /*#__PURE__*/function () {
+        function Controller(options = {}) {
+          var _this4 = this;
+          _classCallCheck(this, Controller);
+          Controller_defineProperty(this, "onScroll", function ({
+            event: event
+          }) {
+            if (!_this4.scrolling) {
+              _this4.toggleIframes();
+              _this4.scrolling = true;
+            }
+            var prevTargetPos = _this4.targetPos;
+            if (!store_default().isTouch && event.type === 'wheel') {
+              event.preventDefault();
+              _this4.syncScroll = true;
+              _this4.wheeling = true;
+              _this4.targetPos += event.deltaY * -1;
+            } else {
+              if (_this4.preventResizeScroll) {
+                _this4.preventResizeScroll = false;
+                return;
+              }
+              if (_this4.wheeling) {
+                return;
+              }
+              if (store_default().isTouch && _this4.options.touchScrollType === 'scrollTop') {
+                _this4.targetPos = _this4.horizontalScroll ? -_this4.containerElement.scrollLeft : -_this4.containerElement.scrollTop;
+              } else {
+                if (store_default().isTouch && _this4.options.touchScrollType === 'transform' && _this4.options.lockIOSBrowserUI) {
+                  _this4.targetPos = _this4.horizontalScroll ? -document.body.scrollLeft : -document.body.scrollTop;
+                } else {
+                  _this4.targetPos = -window.scrollY;
+                }
+              }
+              if (store_default().isTouch && _this4.options.touchScrollType !== 'transform') {
+                _this4.currentPos = _this4.targetPos;
+              }
+            }
+            _this4.clamp();
+            if (prevTargetPos !== _this4.targetPos) {
+              src_e.emit(Events.EXTERNALSCROLL, -_this4.targetPos);
+              if (_this4.options.customScrollbar) {
+                _this4.scrollbar.show();
+              }
+            }
+            _this4.options.customScrollbar && _this4.scrollbar.transform();
+          });
+          Controller_defineProperty(this, "onRAF", function () {
+            if (_this4.testFps && _this4.options.limitLerpRate) {
+              _this4.time = performance.now() * 0.001;
+              _this4.delta = Math.min((_this4.time - _this4.startTime) * 60, 1);
+              _this4.startTime = _this4.time;
+            }
+            if (!_this4.render) return;
+            if (Math.abs(_this4.targetPos - _this4.currentPos) < 0.5) {
+              _this4.currentPos = _this4.targetPos;
+              if (_this4.scrolling && !_this4.syncScroll) {
+                _this4.scrolling = false;
+                _this4.options.customScrollbar && _this4.scrollbar.hide();
+                _this4.toggleIframes(true);
+                src_e.emit(Events.SCROLLEND, -_this4.targetPos);
+              }
+              if (_this4.syncScroll) {
+                window.scrollTo(0, -_this4.targetPos);
+                _this4.syncScroll = false;
+                _this4.wheeling = false;
+              }
+            } else {
+              _this4.currentPos += (_this4.targetPos - _this4.currentPos) * _this4.ease * _this4.delta;
+            }
+            var x = _this4.horizontalScroll ? _this4.currentPos : 0;
+            var y = _this4.horizontalScroll ? 0 : _this4.currentPos;
+            _this4.applyTransform(x, y);
+            src_e.emit(Events.EXTERNALRAF, {
+              targetPos: -_this4.targetPos,
+              currentPos: -_this4.currentPos
+            });
+          });
+          Controller_defineProperty(this, "onResize", function () {
+            if (_this4.scrollElementsLength > 1) {
+              var lastTarget = _this4.scrollElements[_this4.scrollElementsLength - 1];
+              var compStyle = window.getComputedStyle(lastTarget);
+              var marginOffset = parseFloat(_this4.horizontalScroll ? compStyle.marginRight : compStyle.marginBottom);
+              var bcr = lastTarget.getBoundingClientRect();
+              var endPosition = _this4.horizontalScroll ? bcr.right : bcr.bottom;
+              _this4.scrollLength = endPosition + marginOffset - _this4.currentPos;
+            } else {
+              _this4.scrollLength = _this4.horizontalScroll ? _this4.scrollElements[0].scrollWidth : _this4.scrollElements[0].scrollHeight;
+            }
+            var windowSize = _this4.horizontalScroll ? store_default().window.w : store_default().window.h;
+            _this4.maxScroll = _this4.scrollLength > windowSize ? -(_this4.scrollLength - windowSize) : 0;
+            _this4.clamp();
+            if (!_this4.firstResize) {
+              _this4.preventResizeScroll = true;
+            }
+            if (store_default().isTouch && _this4.options.lockIOSBrowserUI) {
+              _this4.containerElement.style.height = _this4.scrollLength + 'px';
+            } else {
+              store_default().body.style.height = _this4.scrollLength + 'px';
+            }
+            _this4.options.customScrollbar && _this4.scrollbar.onResize();
+            _this4.firstResize = false;
+          });
+          Controller_defineProperty(this, "toggleFixedContainer", function () {
+            _this4.containerElement.style.position = 'static';
+            var scrollPos = _this4.currentPos;
+            _this4.applyTransform(0, 0);
+            requestAnimationFrame(function () {
+              _this4.containerElement.style.position = 'fixed';
+              var x = _this4.horizontalScroll ? scrollPos : 0;
+              var y = _this4.horizontalScroll ? 0 : scrollPos;
+              _this4.applyTransform(x, y);
+            });
+          });
+          this.options = options;
+          this.targetPos = this.currentPos = this.prevScrollPos = this.maxScroll = 0;
+          this.enabled = false;
+          this.render = false;
+          this.scrolling = false;
+          this.wheeling = false;
+          this.syncScroll = false;
+          this.horizontalScroll = false;
+          this.firstResize = true;
+          this.preventResizeScroll = false;
+          this.nativeScroll = true;
+          this.ease = store_default().isTouch ? this.options.touchEase : this.options.ease;
+          this.originalScrollbarSetting = this.options.customScrollbar;
+          this.testFps = true;
+          this.delta = 1;
+          this.time = this.startTime = performance.now();
+          this.setElements();
+          if (store_default().isTouch) {
+            this.options.customScrollbar = false;
+            if (this.options.touchScrollType === 'transform') {
+              this.setupSmoothScroll();
+            } else if (this.options.touchScrollType === 'scrollTop') {
+              document.documentElement.classList.add('asscroll-touch');
+              this.addTouchStyles();
+              src_e.on('scroll', this.containerElement, function (e) {
+                src_e.emit(Events.INTERNALSCROLL, {
+                  event: e
+                });
+              }, {
+                passive: true
+              });
+            }
+          } else {
+            this.setupSmoothScroll();
+          }
+          this.addEvents();
+        }
+        return _createClass(Controller, [{
+          key: "setElements",
+          value: function setElements() {
+            this.containerElement = typeof this.options.containerElement === 'string' ? document.querySelector(this.options.containerElement) : this.options.containerElement;
+            if (this.containerElement === null) {
+              console.error('ASScroll: could not find container element');
+            }
+            this.containerElement.setAttribute('asscroll-container', '');
+            this.scrollElements = typeof this.options.scrollElements === 'string' ? document.querySelectorAll(this.options.scrollElements) : this.options.scrollElements;
+            if (this.scrollElements.length) this.scrollElements = _toConsumableArray(this.scrollElements);
+            this.scrollElements = this.scrollElements.length ? this.scrollElements : [this.containerElement.firstElementChild];
+            this.scrollElementsLength = this.scrollElements.length;
+            this.scrollElements.forEach(function (el) {
+              return el.setAttribute('asscroll', '');
+            });
+          }
+        }, {
+          key: "setupSmoothScroll",
+          value: function setupSmoothScroll() {
+            var _this5 = this;
+            this.nativeScroll = false;
+            if (store_default().isTouch && this.options.lockIOSBrowserUI) {
+              Object.assign(document.body.style, {
+                position: 'fixed',
+                width: '100%',
+                height: '100%',
+                overflowY: 'auto'
+              });
+              store_default().html.style.overflow = 'hidden';
+              this.scrollElements.forEach(function (el) {
+                el.style.position = 'fixed';
+              });
+              src_e.on('scroll', document.body, function (e) {
+                src_e.emit(Events.INTERNALSCROLL, {
+                  event: e
+                });
+              });
+            } else {
+              Object.assign(this.containerElement.style, {
+                position: 'fixed',
+                top: '0px',
+                left: '0px',
+                width: '100%',
+                height: '100%',
+                contain: 'content'
+              });
+            }
+            if (this.options.customScrollbar) {
+              this.scrollbar = new Scrollbar(this);
+            }
+            src_e.on(Events.INTERNALRAF, this.onRAF);
+            src_e.on(Events.RESIZE, this.onResize);
+            if (this.options.limitLerpRate) {
+              setTimeout(function () {
+                _this5.testFps = false;
+                _this5.delta = Math.round(_this5.delta * 10) * 0.1;
+              }, 2000);
+            }
+          }
+        }, {
+          key: "applyTransform",
+          value: function applyTransform(x, y) {
+            for (var i = 0; i < this.scrollElementsLength; i++) {
+              this.scrollElements[i].style.transform = "translate3d(".concat(x, "px, ").concat(y, "px, 0px)");
+            }
+          }
+        }, {
+          key: "enable",
+          value: function enable({
+            newScrollElements = false,
+            reset = false,
+            restore = false,
+            horizontalScroll = false
+          } = {}) {
+            if (this.enabled) return;
+            this.enabled = true;
+            this.render = true;
+            this.horizontalScroll = horizontalScroll;
+            if (newScrollElements) {
+              this.scrollElements = newScrollElements.length ? _toConsumableArray(newScrollElements) : [newScrollElements];
+              this.scrollElementsLength = this.scrollElements.length;
+              this.scrollElements.forEach(function (el) {
+                return el.setAttribute('asscroll', '');
+              });
+              if (store_default().isTouch && this.options.touchScrollType === 'transform' && this.options.lockIOSBrowserUI) {
+                this.scrollElements.forEach(function (el) {
+                  el.style.position = 'fixed';
+                });
+              }
+            }
+            this.iframes = this.containerElement.querySelectorAll('iframe');
+            if (store_default().isTouch && this.options.touchScrollType !== 'transform') {
+              if (this.options.touchScrollType === 'scrollTop') {
+                this.containerElement.style.removeProperty('overflow');
+              }
+              this.maxScroll = -this.containerElement.scrollHeight;
+              if (reset) {
+                this.targetPos = this.currentPos = 0;
+                this.scrollTo(0, false);
+              }
+            } else {
+              this.firstResize = true;
+              if (reset) {
+                this.targetPos = this.currentPos = 0;
+                this.applyTransform(0, 0);
+              }
+              this.onResize();
+            }
+            if (store_default().isTouch && this.options.touchScrollType === 'transform' && this.options.lockIOSBrowserUI) {
+              store_default().body.style.overflowY = 'auto';
+              if (reset) {
+                document.body.scrollTo(0, 0);
+              }
+            }
+            if (restore) {
+              this.scrollTo(this.prevScrollPos, false);
+            }
+            src_e.on(Events.WHEEL, this.onScroll);
+            src_e.on(Events.INTERNALSCROLL, this.onScroll);
+          }
+        }, {
+          key: "disable",
+          value: function disable({
+            inputOnly = false
+          } = {}) {
+            if (!this.enabled) return;
+            this.enabled = false;
+            if (!inputOnly) {
+              this.render = false;
+            }
+            src_e.off(Events.WHEEL, this.onScroll);
+            src_e.off(Events.INTERNALSCROLL, this.onScroll);
+            this.prevScrollPos = this.targetPos;
+            if (store_default().isTouch) {
+              if (this.options.touchScrollType === 'scrollTop') {
+                this.containerElement.style.overflow = 'hidden';
+              } else if (this.options.touchScrollType === 'transform' && this.options.lockIOSBrowserUI) {
+                store_default().body.style.overflowY = 'hidden';
+              }
+            } else {
+              store_default().body.style.height = '0px';
+            }
+          }
+        }, {
+          key: "clamp",
+          value: function clamp() {
+            this.targetPos = Math.max(Math.min(this.targetPos, 0), this.maxScroll);
+          }
+        }, {
+          key: "scrollTo",
+          value: function scrollTo(y, emitEvent = true) {
+            this.targetPos = y;
+            if (store_default().isTouch && this.options.touchScrollType !== 'transform') {
+              if (this.options.touchScrollType === 'scrollTop') {
+                if (this.horizontalScroll) {
+                  this.containerElement.scrollTo(-this.targetPos, 0);
+                } else {
+                  this.containerElement.scrollTo(0, -this.targetPos);
+                }
+              } else {
+                window.scrollTo(0, -this.targetPos);
+              }
+            }
+            this.clamp();
+            this.syncScroll = true;
+            if (emitEvent) src_e.emit(Events.EXTERNALSCROLL, -this.targetPos);
+          }
+        }, {
+          key: "toggleIframes",
+          value: function toggleIframes(enable) {
+            for (var i = 0; i < this.iframes.length; i++) {
+              this.iframes[i].style.pointerEvents = enable ? 'auto' : 'none';
+            }
+          }
+        }, {
+          key: "blockScrollEvent",
+          value: function blockScrollEvent(e) {
+            e.stopPropagation();
+          }
+        }, {
+          key: "addEvents",
+          value: function addEvents() {
+            var _this6 = this;
+            // enable smooth scroll if mouse is detected
+            src_e.on(Events.MOUSEDETECTED, function () {
+              if (_this6.options.touchScrollType === 'transform') return;
+              _this6.options.customScrollbar = _this6.originalScrollbarSetting;
+              _this6.ease = _this6.options.ease;
+              _this6.setupSmoothScroll();
+              _this6.onResize();
+            });
+            if (!store_default().isTouch) {
+              src_e.on('mouseleave', document, function () {
+                window.scrollTo(0, -_this6.targetPos);
+              });
+              src_e.on('keydown', window, function (e) {
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'PageUp' || e.key === 'PageDown' || e.key === 'Home' || e.key === 'End' || e.key === 'Tab') {
+                  window.scrollTo(0, -_this6.targetPos);
+                }
+                if (e.key === 'Tab') {
+                  _this6.toggleFixedContainer();
+                }
+              });
+              src_e.delegate('click', 'a[href^="#"]', this.toggleFixedContainer);
+              src_e.delegate('wheel', this.options.blockScrollClass, this.blockScrollEvent);
+            }
+          }
+        }, {
+          key: "addTouchStyles",
+          value: function addTouchStyles() {
+            var styles = ".asscroll-touch [asscroll-container] {position:absolute;top:0;left:0;right:0;bottom:-0.1px;overflow-y: auto;} .asscroll-touch [asscroll] {margin-bottom:0.1px;}";
+            var css = document.createElement('style');
+            if (css.styleSheet) css.styleSheet.cssText = styles;else css.appendChild(document.createTextNode(styles));
+            document.getElementsByTagName("head")[0].appendChild(css);
+          }
+        }]);
+      }();
+      ; // CONCATENATED MODULE: ./src/index.js
+      function src_defineProperty(obj, key, value) {
+        if (key in obj) {
+          Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+          });
+        } else {
+          obj[key] = value;
+        }
+        return obj;
+      }
+
+      /**
+      * Ash's Smooth Scroll 🍑
+      */
+      var ASScroll = /*#__PURE__*/function () {
+        /**
+        * Creates an ASScroll instance
+        *
+        * @typicalname asscroll
+        * @param {object} [parameters]
+        * @param {string|HTMLElement} [parameters.containerElement=[asscroll-container]] The selector string for the outer container element, or the element itself
+        * @param {string|HTMLElement|NodeList} [parameters.scrollElements=[asscroll]] The selector string for the elements to scroll, or the elements themselves
+        * @param {number} [parameters.ease=0.075] The ease amount for the transform lerp
+        * @param {number} [parameters.touchEase=1] The ease amount for the transform lerp on touch devices
+        * @param {string} [parameters.touchScrollType=none] Set the scrolling method on touch devices. Other options are 'transform' and 'scrollTop'. See the [Touch Devices](#touch-devices) section for more info
+        * @param {boolean} [parameters.lockIOSBrowserUI=false] When using an iOS device and touchScrollType is 'transform', this will change the setup to prevent the browser UI from showing/hiding to stop resize events on scroll.
+        * @param {string} [parameters.scrollbarEl=.asscrollbar] The selector string for the custom scrollbar element
+        * @param {string} [parameters.scrollbarHandleEl=.asscrollbar__handle] The selector string for the custom scrollbar handle element
+        * @param {boolean} [parameters.customScrollbar=true] Toggle the custom scrollbar
+        * @param {boolean} [parameters.scrollbarStyles=true] Include the scrollbar CSS via Javascript
+        * @param {boolean} [parameters.disableNativeScrollbar=true] Disable the native browser scrollbar
+        * @param {boolean} [parameters.disableRaf=false] Disable internal requestAnimationFrame loop in order to use an external one
+        * @param {boolean} [parameters.disableResize=false] Disable internal resize event on the window in order to use an external one
+        * @param {boolean} [parameters.limitLerpRate=true] Match lerp speed on >60Hz displays to that of a 60Hz display
+        * @param {string} [parameters.blockScrollClass=.asscroll-block] The class to add to elements that should block ASScroll when hovered
+        */
+        function ASScroll(_parameters = {}) {
+          var _this7 = this;
+          _classCallCheck(this, ASScroll);
+          src_defineProperty(this, "update", function () {
+            _this7.events.onRaf();
+          });
+          src_defineProperty(this, "resize", function (parameters) {
+            _this7.events.onResize(parameters);
+          });
+          var _parameters$container = _parameters.containerElement,
+            containerElement = _parameters$container === void 0 ? '[asscroll-container]' : _parameters$container,
+            _parameters$scrollEle = _parameters.scrollElements,
+            scrollElements = _parameters$scrollEle === void 0 ? '[asscroll]' : _parameters$scrollEle,
+            _parameters$ease = _parameters.ease,
+            ease = _parameters$ease === void 0 ? 0.075 : _parameters$ease,
+            _parameters$touchEase = _parameters.touchEase,
+            touchEase = _parameters$touchEase === void 0 ? 1 : _parameters$touchEase,
+            _parameters$touchScro = _parameters.touchScrollType,
+            touchScrollType = _parameters$touchScro === void 0 ? 'none' : _parameters$touchScro,
+            _parameters$lockIOSBr = _parameters.lockIOSBrowserUI,
+            lockIOSBrowserUI = _parameters$lockIOSBr === void 0 ? false : _parameters$lockIOSBr,
+            _parameters$scrollbar = _parameters.scrollbarEl,
+            scrollbarEl = _parameters$scrollbar === void 0 ? '.asscrollbar' : _parameters$scrollbar,
+            _parameters$scrollbar2 = _parameters.scrollbarHandleEl,
+            scrollbarHandleEl = _parameters$scrollbar2 === void 0 ? '.asscrollbar__handle' : _parameters$scrollbar2,
+            _parameters$customScr = _parameters.customScrollbar,
+            customScrollbar = _parameters$customScr === void 0 ? true : _parameters$customScr,
+            _parameters$scrollbar3 = _parameters.scrollbarStyles,
+            scrollbarStyles = _parameters$scrollbar3 === void 0 ? true : _parameters$scrollbar3,
+            _parameters$disableNa = _parameters.disableNativeScrollbar,
+            disableNativeScrollbar = _parameters$disableNa === void 0 ? true : _parameters$disableNa,
+            _parameters$disableRa = _parameters.disableRaf,
+            disableRaf = _parameters$disableRa === void 0 ? false : _parameters$disableRa,
+            _parameters$disableRe = _parameters.disableResize,
+            disableResize = _parameters$disableRe === void 0 ? false : _parameters$disableRe,
+            _parameters$limitLerp = _parameters.limitLerpRate,
+            limitLerpRate = _parameters$limitLerp === void 0 ? true : _parameters$limitLerp,
+            _parameters$blockScro = _parameters.blockScrollClass,
+            blockScrollClass = _parameters$blockScro === void 0 ? '.asscroll-block' : _parameters$blockScro;
+          this.events = new Events({
+            disableRaf: disableRaf,
+            disableResize: disableResize
+          });
+          this.controller = new Controller({
+            containerElement: containerElement,
+            scrollElements: scrollElements,
+            ease: ease,
+            touchEase: touchEase,
+            customScrollbar: customScrollbar,
+            lockIOSBrowserUI: lockIOSBrowserUI,
+            scrollbarEl: scrollbarEl,
+            scrollbarHandleEl: scrollbarHandleEl,
+            scrollbarStyles: scrollbarStyles,
+            disableNativeScrollbar: disableNativeScrollbar,
+            touchScrollType: touchScrollType,
+            limitLerpRate: limitLerpRate,
+            blockScrollClass: blockScrollClass
+          });
+        }
+        /**
+        * Enable ASScroll.
+        *
+        * @example <caption>Enables ASScroll on the '.page' element and resets the scroll position to 0</caption>
+        * asscroll.enable({ newScrollElements: document.querySelector('.page'), reset: true })
+        *
+        * @example <caption>Enables ASScroll and restores to the previous position before ASScroll.disable() was called</caption>
+        * asscroll.enable({ restore: true })
+        *
+        * @param {object} [parameters]
+        * @param {boolean|NodeList|HTMLElement} [parameters.newScrollElements=false] Specify the new element(s) that should be scrolled
+        * @param {boolean} [parameters.reset=false] Reset the scroll position to 0
+        * @param {boolean} [parameters.restore=false] Restore the scroll position to where it was when disable() was called
+        * @param {boolean} [parameters.horizontalScroll=false] Toggle horizontal scrolling
+        */
+        return _createClass(ASScroll, [{
+          key: "enable",
+          value: function enable(parameters) {
+            if (parameters !== undefined && _typeof(parameters) !== 'object') {
+              console.warn('ASScroll: Please pass an object with your parameters. Since 2.0');
+            }
+            this.controller.enable(parameters);
+          }
+          /**
+          * Disable ASScroll.
+          *
+          * @example <caption>Disables the ability to manually scroll whilst still allowing position updates to be made via asscroll.currentPos, for example</caption>
+          * asscroll.disable({ inputOnly: true })
+          *
+          * @param {object} [parameters]
+          * @param {boolean} [parameters.inputOnly=false] Only disable the ability to manually scroll (still allow transforms)
+          */
+        }, {
+          key: "disable",
+          value: function disable(parameters) {
+            if (parameters !== undefined && _typeof(parameters) !== 'object') {
+              console.warn('ASScroll: Please pass an object with your parameters. Since 2.0');
+            }
+            this.controller.disable(parameters);
+          }
+          /**
+          * Call the internal animation frame request callback.
+          * @function
+          */
+
+          /**
+          * Add an event listener.
+          *
+          * @example <caption>Logs out the scroll position when the 'scroll' event is fired</caption>
+          * asscroll.on('scroll', scrollPos => console.log(scrollPos))
+          *
+          * @example <caption>Returns the target scroll position and current scroll position during the internal update loop</caption>
+          * asscroll.on('update', ({ targetPos, currentPos }) => console.log(targetPos, currentPos))
+          *
+          * @example <caption>Fires when the lerped scroll position has reached the target position</caption>
+          * asscroll.on('scrollEnd', scrollPos => console.log(scrollPos))
+          *
+          * @param {string} eventName Name of the event you wish to listen for
+          * @param {function} callback Callback function that should be executed when the event fires
+          */
+        }, {
+          key: "on",
+          value: function on(eventName, callback) {
+            if (typeof callback !== 'function') {
+              console.error('ASScroll: Function not provided as second parameter');
+              return;
+            }
+            if (eventName === 'scroll') {
+              src_e.on(Events.EXTERNALSCROLL, callback);
+              return;
+            }
+            if (eventName === 'update') {
+              src_e.on(Events.EXTERNALRAF, callback);
+              return;
+            }
+            if (eventName === 'scrollEnd') {
+              src_e.on(Events.SCROLLEND, callback);
+              return;
+            }
+            console.warn("ASScroll: \"".concat(eventName, "\" is not a valid event"));
+          }
+          /**
+          * Remove an event listener.
+          * @param {string} eventName Name of the event
+          * @param {function} callback Callback function
+          */
+        }, {
+          key: "off",
+          value: function off(eventName, callback) {
+            if (typeof callback !== 'function') {
+              console.error('ASScroll: Function not provided as second parameter');
+              return;
+            }
+            if (eventName === 'scroll') {
+              src_e.off(Events.EXTERNALSCROLL, callback);
+              return;
+            }
+            if (eventName === 'update') {
+              src_e.off(Events.EXTERNALRAF, callback);
+              return;
+            }
+            if (eventName === 'scrollEnd') {
+              src_e.off(Events.SCROLLEND, callback);
+              return;
+            }
+            console.warn("ASScroll: \"".concat(eventName, "\" is not a valid event"));
+          }
+          /**
+          * Scroll to a given position on the page.
+          * @param {number} targetPos Target scroll position
+          * @param {boolean} [emitEvent=true] Whether to emit the external scroll events or not
+          */
+        }, {
+          key: "scrollTo",
+          value: function scrollTo(targetPos, emitEvent = true) {
+            this.controller.scrollTo(-targetPos, emitEvent);
+          }
+          /**
+          * Returns the target scroll position.
+          *
+          * @return {number} Target scroll position
+          */
+        }, {
+          key: "targetPos",
+          get: function get() {
+            return -this.controller.targetPos;
+          }
+          /**
+          * Gets or sets the current scroll position.
+          *
+          * @example <caption>Sets the scroll position to 200, bypassing any lerps</caption>
+          * asscroll.currentPos = 200
+          *
+          * @param {number} scrollPos The desired scroll position
+          * @return {number} Current scroll position
+          */
+        }, {
+          key: "currentPos",
+          get: function get() {
+            return -this.controller.currentPos;
+          },
+          set: function set(scrollPos) {
+            this.controller.targetPos = this.controller.currentPos = -scrollPos;
+          }
+          /**
+          * Returns the maximum scroll height of the page.
+          * @return {number} Maxmium scroll height
+          */
+        }, {
+          key: "maxScroll",
+          get: function get() {
+            return -this.controller.maxScroll;
+          }
+          /**
+           * Returns the outer element that ASScroll is attached to.
+           * @return {HTMLElement} The outer element
+           */
+        }, {
+          key: "containerElement",
+          get: function get() {
+            return this.controller.containerElement;
+          }
+          /**
+           * Returns the the element(s) that ASScroll is scrolling.
+           * @return {Array} An array of elements ASScroll is scrolling
+           */
+        }, {
+          key: "scrollElements",
+          get: function get() {
+            return this.controller.scrollElements;
+          }
+          /**
+           * Returns whether or not ASScroll is in horizontal scroll mode
+           * @return {boolean} The status of horizontal scroll
+           */
+        }, {
+          key: "isHorizontal",
+          get: function get() {
+            return this.controller.horizontalScroll;
+          }
+          /**
+           * Returns whether or not ASScroll is actively transforming the page element(s). For example, would return false if running on a touch device and touchScrollType !== 'transform', or if ASScroll was currently disabled via the .disable() method.
+           * @return {boolean} The status of actively controlling the page scroll
+           */
+        }, {
+          key: "isScrollJacking",
+          get: function get() {
+            return !this.controller.nativeScroll && this.controller.enabled;
+          }
+          /**
+           * @deprecated since 2.0.0 - use targetPos instead
+           * @see {@link ASScroll#targetPos}
+           */
+        }, {
+          key: "scrollPos",
+          get: function get() {}
+          /**
+           * @deprecated since 2.0.0 - use currentPos instead
+           * @see {@link ASScroll#currentPos}
+           */
+        }, {
+          key: "smoothScrollPos",
+          get: function get() {}
+          /**
+           * @deprecated since 2.0.0 - use update() instead
+           * @see {@link ASScroll#update}
+           */
+        }, {
+          key: "onRaf",
+          value: function onRaf() {}
+          /**
+           * @deprecated since 2.0.0 - use resize() instead
+           * @see {@link ASScroll#resize}
+           */
+        }, {
+          key: "onResize",
+          value: function onResize() {}
+        }]);
+      }();
+      /* harmony default export */
+      var src = ASScroll;
+    }();
+    __webpack_exports__ = __webpack_exports__.default;
+    /******/
+    return __webpack_exports__;
+    /******/
+  }();
+});
+},{}],"app.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -46515,10 +48318,17 @@ var _vertex = _interopRequireDefault(require("./shaders/vertex.glsl"));
 var _ = _interopRequireDefault(require("./img/1.jpg"));
 var dat = _interopRequireWildcard(require("dat.gui"));
 var _gsap = _interopRequireDefault(require("gsap"));
+var _asscroll = _interopRequireDefault(require("@ashthornton/asscroll"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -46542,6 +48352,10 @@ var Sketch = exports.default = /*#__PURE__*/function () {
     // this.renderer.setPixelRatio(2);
     this.container.appendChild(this.renderer.domElement);
     this.controls = new _OrbitControls.OrbitControls(this.camera, this.renderer.domElement);
+    this.asscroll = new _asscroll.default();
+    this.asscroll.enable({
+      horizontalScroll: true
+    });
     this.time = 0;
     this.setupSettings();
     this.resize();
@@ -46575,7 +48389,8 @@ var Sketch = exports.default = /*#__PURE__*/function () {
   }, {
     key: "addObjects",
     value: function addObjects() {
-      this.geometry = new THREE.PlaneGeometry(300, 300, 100, 100);
+      var _this = this;
+      this.geometry = new THREE.PlaneGeometry(1, 1, 100, 100);
       console.log(this.geometry);
       this.material = new THREE.ShaderMaterial({
         // wireframe: true,
@@ -46619,9 +48434,48 @@ var Sketch = exports.default = /*#__PURE__*/function () {
         duration: 1
       }, 0.3);
       this.mesh = new THREE.Mesh(this.geometry, this.material);
-      this.scene.add(this.mesh);
+      this.mesh.scale.set(300, 300, 1);
+      // we remove the old mesh below because we're using the webgl images acquired in webgl
+      // this.scene.add( this.mesh );
       this.mesh.position.x = 300;
       // this.mesh.rotation.z = 0.5
+
+      //selecting the images. This is a node list so we have to convert to array.
+      this.images = _toConsumableArray(document.querySelectorAll('.js-image'));
+      this.materials = [];
+      this.imageStore = this.images.map(function (img) {
+        // console log this to see if the webgl images are being stored
+        console.log(img);
+        // getting the coordinates for what we need on the window
+        var bounds = img.getBoundingClientRect();
+        // console.log(bounds);
+
+        var m = _this.material.clone();
+        _this.materials.push(m);
+
+        //in three js we can create textures out of dom elements (below)
+        var image = new Image();
+        image.src = img.src;
+        var texture = new THREE.Texture(image);
+        // let texture = new THREE.Texture(img);
+        texture.needsUpdate = true;
+        m.uniforms.uTexture.value = texture;
+        var mesh = new THREE.Mesh(_this.geometry, m);
+        _this.scene.add(mesh);
+        // need to scale the mesh because prior to this it's 1 pixel
+        // this scales the mesh the correct size and puts in the middle
+        mesh.scale.set(bounds.width, bounds.height, 1);
+        console.log(mesh);
+        //return the properties of the object you created
+        return {
+          img: img,
+          mesh: mesh,
+          width: bounds.width,
+          height: bounds.height,
+          top: bounds.top,
+          left: bounds.left
+        };
+      });
     }
   }, {
     key: "render",
@@ -46629,7 +48483,7 @@ var Sketch = exports.default = /*#__PURE__*/function () {
       this.time += 0.05;
       this.material.uniforms.time.value = this.time;
       this.material.uniforms.uProgress.value = this.settings.progress;
-      // this.tl.progress(this.settings.progress)
+      this.tl.progress(this.settings.progress);
       this.mesh.rotation.x = this.time / 2000;
       this.mesh.rotation.y = this.time / 1000;
       this.renderer.render(this.scene, this.camera);
@@ -46641,7 +48495,7 @@ var Sketch = exports.default = /*#__PURE__*/function () {
 new Sketch({
   domElement: document.getElementById('container')
 });
-},{"three":"../../../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls.js":"../../../node_modules/three/examples/jsm/controls/OrbitControls.js","./shaders/fragment.glsl":"shaders/fragment.glsl","./shaders/vertex.glsl":"shaders/vertex.glsl","./img/1.jpg":"img/1.jpg","dat.gui":"../../../node_modules/dat.gui/build/dat.gui.module.js","gsap":"../../../node_modules/gsap/index.js"}],"../../../.nvm/versions/node/v16.19.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"three":"../../../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls.js":"../../../node_modules/three/examples/jsm/controls/OrbitControls.js","./shaders/fragment.glsl":"shaders/fragment.glsl","./shaders/vertex.glsl":"shaders/vertex.glsl","./img/1.jpg":"img/1.jpg","dat.gui":"../../../node_modules/dat.gui/build/dat.gui.module.js","gsap":"../../../node_modules/gsap/index.js","@ashthornton/asscroll":"../../../node_modules/@ashthornton/asscroll/build/asscroll.js"}],"../../../.nvm/versions/node/v16.19.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -46666,7 +48520,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50518" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52823" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
